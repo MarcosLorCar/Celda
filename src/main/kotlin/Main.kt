@@ -5,7 +5,7 @@ import util.GameView
 import util.Scene
 import util.Vector2
 
-val game = CeldaClient()
+val gamePApplet = CeldaClient()
 lateinit var loadedGame: CeldaGame
 lateinit var mainView: GameView
 val sprites: MutableMap<String, PImage> = mutableMapOf()
@@ -13,14 +13,14 @@ val sprites: MutableMap<String, PImage> = mutableMapOf()
 fun main(args: Array<String>) {
     //TEMP WORLD AND PLAYER CREATION
     loadedGame = CeldaGame(
-        mainPlayer = Player(Vector2(256f,256f)),
+        mainPlayer = Player(Vector2(0f,0f)),
         name = "TestGame",
     )
 
-    PApplet.runSketch(arrayOf("CeldaClient"),game)
+    PApplet.runSketch(arrayOf("CeldaClient"),gamePApplet)
 }
 
-fun getSprite(s: String): PImage = game.run {
+fun getSprite(s: String): PImage = gamePApplet.run {
     loadImage(dataPath("sprites/$s.png")) ?: sprites["null"]!!
 }
 
@@ -72,13 +72,7 @@ class CeldaClient : PApplet() {
             val sectionOffset = Vector2(section.worldPos.x*512f,section.worldPos.y*512f)
             for (tile in section.tiles) {
                 val tileOffset = Vector2(tile.sectionPos.x*32f,tile.sectionPos.y*32f)
-                image(
-                    tile.getSprite(),
-                    sectionOffset.x + tileOffset.x - centreInWorld.x,
-                    sectionOffset.y + tileOffset.y - centreInWorld.y,
-                    32f,
-                    32f
-                )
+                image(tile.getSprite(), sectionOffset.x + tileOffset.x - centreInWorld.x, sectionOffset.y + tileOffset.y - centreInWorld.y, 32f, 32f)
             }
         }
 

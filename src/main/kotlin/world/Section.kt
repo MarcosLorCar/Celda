@@ -27,14 +27,14 @@ data class Section(
         fun sectionFromFile(sectionFile: File): Section =
             Json.decodeFromStream(sectionFile.inputStream())
 
-        fun genSection(sectionCoords: VectorInt2, seed: Long): Section {
+        fun genSection(sectionCoords: VectorInt2, rng: Random): Section {
             val tiles = mutableListOf<Tile>()
             for (i in 0..255) {
                 val xInWorld: Int = i%16 + sectionCoords.x*16
                 val yInWorld: Int = i/16 + sectionCoords.y*16
                 val xInSection: Int = i%16
                 val yInSection: Int = i/16
-                val biome = if (Random.nextBoolean()) Biome.OVERWORLD else Biome.DESERT
+                val biome = if (rng.nextFloat()>0.5f) Biome.OVERWORLD else Biome.DESERT
                 tiles.add(i, FloorTile(VectorInt2(xInSection,yInSection),biome))
             }
             return Section(VectorInt2(sectionCoords.x,sectionCoords.y),tiles.toTypedArray())

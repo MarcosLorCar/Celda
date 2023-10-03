@@ -17,9 +17,11 @@ class CeldaGame(
     private var worlds: MutableList<CeldaWorld> = mutableListOf(CeldaWorld("overworld", seed = Random.nextLong())),
     private val name: String,
 ) {
-    var loadedWorld: CeldaWorld = worlds[0]
+    var loadedWorld: CeldaWorld
 
     init {
+        loadedWorld = worlds[0]
+        gamePApplet.noiseSeed(loadedWorld.seed)
         val worldDir = File("data/games/$name")
         worldDir.mkdir()
         File(worldDir.path+"/${loadedWorld.name}").mkdir()
@@ -27,6 +29,8 @@ class CeldaGame(
 
     private val renderDistance: VectorInt2 = VectorInt2(2,1)
     private val sectionsToLoad = mutableListOf<VectorInt2>()
+
+    fun loadWorld(index: Int): Unit = TODO()
 
     fun updateSections() {
         val unloadSections = mutableListOf<Section>()
@@ -56,9 +60,10 @@ class CeldaGame(
 
     private fun loadOrGenSection(sectionCoords: VectorInt2): Section {
         val sectionFile = File("data/games/$name/${loadedWorld.name}/${sectionCoords.x}_${sectionCoords.y}.json")
-        if (sectionFile.createNewFile()) {
+        if (!sectionFile.exists()) {
             //generate it
-            val newSection = Section.genSection(sectionCoords,loadedWorld.seed)
+            val newSection = Section.genSection(sectionCoords,loadedWorld.rng)
+            sectionFile.createNewFile()
             sectionFile.outputStream().write(Json.encodeToString(newSection).toByteArray())
             return newSection
         }
